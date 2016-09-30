@@ -52,5 +52,25 @@ for env in devEnvironments:
     devEnvironmentApps = getJSONFiles(loadedConfig['MARATHON_APPS'] + env)
     devEnvironmentContainerImages = getContainerImages(devEnvironmentApps, env)
     #print devEnvironmentContainerImages
-    for ct in devEnvironmentContainerImages:
-        print '{0: <65}'.format(ct[1][0].replace("resources/dev-env/com.birchbox/","")) +  '{0: <40}'.format(ct[2][0]) + ct[2][1]
+    print "validating " + env
+    for templateCt in templateContainerImages:
+        # check to see if this container exists and is the same version
+        appMatch=0
+        versionMatch=0
+        for devCt in devEnvironmentContainerImages:
+            if templateCt[1][0].replace("resources/dev-env/com.birchbox/dev.TEMPLATE","") == devCt[1][0].replace("resources/dev-env/com.birchbox/" + env,""):
+                #print '\t' + devCt[1][0] + " match!"
+                appMatch=1
+        
+        if appMatch == 0:
+            print "\tno match was found for " + templateCt[1][0]
+
+
+        
+
+            #else:
+                #print templateCt[1][0].replace("resources/dev-env/com.birchbox/dev.TEMPLATE","") + "\t\t" + devCt[1][0].replace("resources/dev-env/com.birchbox/" + env,"")
+
+    #for ct in devEnvironmentContainerImages:
+        #print '{0: <65}'.format(ct[1][0].replace("resources/dev-env/com.birchbox/","")) +  '{0: <40}'.format(ct[2][0]) + ct[2][1]
+    
