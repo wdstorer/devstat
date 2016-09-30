@@ -1,2 +1,2 @@
-MARATHON_TEMPLATES: 'resources/dev-env/com.birchbox/dev.TEMPLATE/'
+MARATHON_APPS: 'resources/dev-env/com.birchbox/'
 
