@@ -34,6 +34,25 @@ def getContainerImages(envApps, envName):
             ctImages.append([[envName],[app],(json.load(data_file)["container"]["docker"]["image"].rsplit(':',1))])
     return ctImages
 
+def validateMarathonApps(templateContainerImages, devEnvironments):
+    for env in devEnvironments:
+        devEnvironmentApps = getJSONFiles(loadedConfig['MARATHON_APPS'] + env)
+        devEnvironmentContainerImages = getContainerImages(devEnvironmentApps, env)
+        #print devEnvironmentContainerImages
+        print "validating " + env
+        for templateCt in templateContainerImages:
+            # check to see if this container exists and is the same version
+            appMatch=0
+            versionMatch=0
+            for devCt in devEnvironmentContainerImages:
+                if templateCt[1][0].replace("resources/dev-env/com.birchbox/dev.TEMPLATE","") == devCt[1][0].replace("resources/dev-env/com.birchbox/" + env,""):
+                    #print '\t' + devCt[1][0] + " match!"
+                    appMatch=1
+        
+            if appMatch == 0:
+                print "\tno match was found for " + templateCt[1][0]
+
+
 loadedConfig = loadConfig("config.yml")
 templateApps = getJSONFiles(loadedConfig['MARATHON_APPS'] + 'dev.TEMPLATE')
 templateContainerImages = getContainerImages(templateApps, 'dev.TEMPLATE')
@@ -48,22 +67,9 @@ for ct in templateContainerImages:
 # Check tag versions 
 devEnvironments = getDevEnvs(loadedConfig['MARATHON_APPS'])
 
-for env in devEnvironments:
-    devEnvironmentApps = getJSONFiles(loadedConfig['MARATHON_APPS'] + env)
-    devEnvironmentContainerImages = getContainerImages(devEnvironmentApps, env)
-    #print devEnvironmentContainerImages
-    print "validating " + env
-    for templateCt in templateContainerImages:
-        # check to see if this container exists and is the same version
-        appMatch=0
-        versionMatch=0
-        for devCt in devEnvironmentContainerImages:
-            if templateCt[1][0].replace("resources/dev-env/com.birchbox/dev.TEMPLATE","") == devCt[1][0].replace("resources/dev-env/com.birchbox/" + env,""):
-                #print '\t' + devCt[1][0] + " match!"
-                appMatch=1
-        
-        if appMatch == 0:
-            print "\tno match was found for " + templateCt[1][0]
+validateMarathonApps(templateContainerImages, devEnvironments)
+
+
 
 
         
